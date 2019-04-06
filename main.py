@@ -6,34 +6,27 @@ from sklearn.cluster import KMeans
 
 
 def find_histogram(clt):
-    """
-    create a histogram with k clusters
-    :param: clt
-    :return:hist
-    """
     numLabels = np.arange(0, len(np.unique(clt.labels_)) + 1)
     (hist, _) = np.histogram(clt.labels_, bins=numLabels)
-
     hist = hist.astype("float")
     hist /= hist.sum()
 
     return hist
 def plot_colors2(hist, centroids):
-    bar = np.zeros((50, 300, 3), dtype="uint8")
+    bar = np.zeros((100, 500,3), dtype="uint8")
     startX = 0
-    maxx=0
+    ans={}
     for (percent, color) in zip(hist, centroids):
-        # plot the relative percentage of each cluster
-        if percent > maxx:
-            maxx=percent
-            col = color
-        endX = startX + (percent * 300)
-        cv2.rectangle(bar, (int(startX), 0), (int(endX), 50),
-                      color.astype("uint8").tolist(), -1)
+        ans[percent*100] = matplotlib.colors.to_hex(color/255)
+        endX = startX + (percent * 500)
+        cv2.rectangle(bar, (int(startX), 0), (int(endX), 100),color.astype("uint8").tolist(), -1)
         startX = endX
-    # print(maxx,format(col[0],'02X'),format(col[1],'02X'),format(col[2],'02X'))
-    col = col/255
-    print(matplotlib.colors.to_hex(col))
+    print("Top 5 dominating colours are :")
+    print('  HexCode Percentage')
+    i=1        
+    for p in reversed(sorted(ans)):
+        print(i,ans[p],'{:f}'.format(p))
+        i = i+1
     # return the bar chart
     return bar
 
